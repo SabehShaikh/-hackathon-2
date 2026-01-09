@@ -1,3 +1,13 @@
+---
+title: Hackathon2 Todo Backend
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Todo Backend API
 
 RESTful API for todo task management with JWT authentication and PostgreSQL persistence.

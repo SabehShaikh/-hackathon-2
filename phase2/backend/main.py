@@ -42,7 +42,12 @@ def on_startup():
     Creates database tables if they don't exist. This is idempotent -
     safe to run multiple times.
     """
-    SQLModel.metadata.create_all(engine)
+    try:
+        SQLModel.metadata.create_all(engine)
+        print("✓ Database tables created successfully")
+    except Exception as e:
+        print(f"⚠ Warning: Could not create database tables: {e}")
+        print("The app will start but database operations may fail")
 
 
 @app.get("/api/health")
@@ -51,10 +56,24 @@ def health_check():
     Health check endpoint (no authentication required).
 
     Returns:
-        dict: Health status and timestamp
+        dict: Health status and database connectivity
 
     Example:
         GET /api/health
-        Response: {"status": "healthy"}
+        Response: {"status": "healthy", "database": "connected"}
     """
-    return {"status": "healthy"}
+    db_status = "unknown"
+    try:
+        # Test database connection
+        from sqlmodel import text, Session
+        with Session(engine) as session:
+            session.exec(text("SELECT 1"))
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)[:100]}"
+
+    return {
+        "status": "healthy",
+        "database": db_status,
+        "message": "Backend API is running"
+    }

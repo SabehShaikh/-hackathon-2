@@ -8,6 +8,7 @@ and environment configuration using Pydantic Settings.
 from sqlmodel import create_engine, Session
 from pydantic_settings import BaseSettings
 from typing import Generator
+import os
 
 
 class Settings(BaseSettings):
@@ -21,19 +22,32 @@ class Settings(BaseSettings):
     """
     database_url: str
     better_auth_secret: str
-    allowed_origins: str
+    allowed_origins: str = "*"  # Default to allow all origins (can be restricted via env var)
 
     class Config:
-        env_file = ".env"
+        # Use .env file if it exists (local dev), otherwise use system env vars (HF Spaces)
+        env_file = ".env" if os.path.exists(".env") else None
+        env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra environment variables
 
 
-# Instantiate settings (loaded from .env file)
-settings = Settings()
+# Instantiate settings (loaded from .env file or environment variables)
+try:
+    settings = Settings()
+    print(f"✓ Settings loaded successfully")
+    print(f"  - DATABASE_URL: {'set' if settings.database_url else 'missing'}")
+    print(f"  - BETTER_AUTH_SECRET: {'set' if settings.better_auth_secret else 'missing'}")
+    print(f"  - ALLOWED_ORIGINS: {settings.allowed_origins}")
+except Exception as e:
+    print(f"⚠ ERROR loading settings: {e}")
+    print("Please ensure DATABASE_URL and BETTER_AUTH_SECRET environment variables are set")
+    raise
 
 # Create database engine
 engine = create_engine(
     settings.database_url,
     echo=True,  # Log SQL statements (disable in production)
+    pool_pre_ping=True,  # Verify connections before using them
 )
 
 
