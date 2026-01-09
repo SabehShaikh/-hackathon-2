@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(ping:*)",
+      "WebFetch(domain:sabehshaikh-hackathon2-todo-backend.hf.space)"
+    ]
+  }
+}

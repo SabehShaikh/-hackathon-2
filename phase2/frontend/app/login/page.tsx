@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { setAuthToken, setUserEmail } from "@/lib/api";
+import { setAuthToken, setUserEmail, API_BASE_URL } from "@/lib/api";
 import { ArrowLeft } from "lucide-react";
 
 function LoginForm() {
@@ -49,7 +49,7 @@ function LoginForm() {
     setErrors({});
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

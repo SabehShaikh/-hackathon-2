@@ -1,8 +1,8 @@
 # TodoApp - Full-Stack Task Management Application
 
-A modern, full-stack todo application with a beautiful UI, built with Next.js 15, FastAPI, and PostgreSQL. Features JWT authentication, real-time updates, dark mode support, and a responsive design.
+A modern, full-stack todo application with a beautiful UI, built with Next.js 16+, FastAPI, and PostgreSQL. Features JWT authentication, real-time updates, dark mode support, and a responsive design.
 
-![TodoApp](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![TodoApp](https://img.shields.io/badge/Next.js-16+-black?logo=next.js)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
@@ -32,7 +32,7 @@ A modern, full-stack todo application with a beautiful UI, built with Next.js 15
 ## Tech Stack
 
 ### Frontend
-- **Framework**: Next.js 15 (React 19)
+- **Framework**: Next.js 16+ (React 19)
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS 3 with custom gradient designs
 - **UI Components**: Radix UI primitives with shadcn/ui

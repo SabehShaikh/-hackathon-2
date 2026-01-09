@@ -4,7 +4,9 @@
       "Bash(pip install:*)",
       "Bash(python -m uvicorn:*)",
       "Bash(npm run dev:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)"
     ]
   }
 }

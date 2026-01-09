@@ -1,6 +1,8 @@
 import type { Task, TaskCreateRequest, TaskUpdateRequest, APIError } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// PRODUCTION FIX: Hardcoded HTTPS URL to prevent mixed content errors on Vercel
+// This ensures the app always uses HTTPS in production, even if env var is missing
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://sabehshaikh-hackathon2-todo-backend.hf.space";
 
 /**
  * Generic API client with authentication and error handling

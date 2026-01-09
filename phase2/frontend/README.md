@@ -1,6 +1,6 @@
 # Todo Frontend Application
 
-A modern, responsive todo application built with Next.js 16, React 19, TypeScript, and Tailwind CSS.
+A modern, responsive todo application built with Next.js 16+, React 19, TypeScript, and Tailwind CSS.
 
 ## Features
 
@@ -15,7 +15,7 @@ A modern, responsive todo application built with Next.js 16, React 19, TypeScrip
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 with App Router
+- **Framework**: Next.js 16+ with App Router
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS v4
 - **UI Components**: Shadcn/ui
