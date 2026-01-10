@@ -44,9 +44,9 @@ def on_startup():
     """
     try:
         SQLModel.metadata.create_all(engine)
-        print("✓ Database tables created successfully")
+        print("[OK] Database tables created successfully")
     except Exception as e:
-        print(f"⚠ Warning: Could not create database tables: {e}")
+        print(f"[WARNING] Could not create database tables: {e}")
         print("The app will start but database operations may fail")
 
 

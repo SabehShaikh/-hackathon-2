@@ -109,7 +109,7 @@ export const tasksAPI = {
    * List all tasks for authenticated user
    */
   list: async (): Promise<Task[]> => {
-    return fetchAPI<Task[]>("/api/tasks");
+    return fetchAPI<Task[]>("/api/tasks/");
   },
 
   /**
@@ -123,7 +123,7 @@ export const tasksAPI = {
    * Create a new task
    */
   create: async (data: TaskCreateRequest): Promise<Task> => {
-    return fetchAPI<Task>("/api/tasks", {
+    return fetchAPI<Task>("/api/tasks/", {
       method: "POST",
       body: JSON.stringify(data),
     });

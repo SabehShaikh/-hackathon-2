@@ -34,12 +34,12 @@ class Settings(BaseSettings):
 # Instantiate settings (loaded from .env file or environment variables)
 try:
     settings = Settings()
-    print(f"✓ Settings loaded successfully")
+    print(f"[OK] Settings loaded successfully")
     print(f"  - DATABASE_URL: {'set' if settings.database_url else 'missing'}")
     print(f"  - BETTER_AUTH_SECRET: {'set' if settings.better_auth_secret else 'missing'}")
     print(f"  - ALLOWED_ORIGINS: {settings.allowed_origins}")
 except Exception as e:
-    print(f"⚠ ERROR loading settings: {e}")
+    print(f"[ERROR] loading settings: {e}")
     print("Please ensure DATABASE_URL and BETTER_AUTH_SECRET environment variables are set")
     raise
 
