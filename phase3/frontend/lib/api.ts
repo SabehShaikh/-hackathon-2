@@ -187,7 +187,7 @@ export const tasksAPI = {
    */
   update: async (id: number, data: TaskUpdateRequest): Promise<Task> => {
     return fetchAPI<Task>(`/api/tasks/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   },

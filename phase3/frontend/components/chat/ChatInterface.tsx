@@ -202,9 +202,17 @@ export function ChatInterface() {
           ))
         )}
         {isLoading && (
-          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm">Thinking...</span>
+          <div className="flex items-start gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+              <Bot className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+            </div>
+            <div className="rounded-2xl px-4 py-3 bg-gray-100 dark:bg-gray-800 border-l-2 border-purple-500">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+            </div>
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -225,20 +233,20 @@ export function ChatInterface() {
       )}
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-purple-100 dark:border-gray-800">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-purple-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
         <div className="flex gap-2">
           <Input
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message... (e.g., 'Add buy milk' or 'Add X and add Y')"
+            placeholder="Type a message... (e.g., 'Add buy milk' or 'Show my tasks')"
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
           />
           <Button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-105 active:scale-95"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -248,7 +256,7 @@ export function ChatInterface() {
           </Button>
         </div>
         <p className="text-xs text-gray-400 mt-2">
-          Tip: You can add multiple tasks at once! Try &quot;Add X and add Y&quot;
+          Tip: Try &quot;Add X and add Y&quot; for multiple tasks, or &quot;Complete the first task&quot;
         </p>
       </form>
     </div>
@@ -288,12 +296,12 @@ function ChatBubble({ message }: { message: ChatMessageExtended }) {
           )}
         </div>
         <div
-          className={`rounded-2xl px-4 py-2 ${
+          className={`rounded-2xl px-4 py-2 shadow-sm ${
             isUser
-              ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
+              ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-purple-500/20"
               : isError
               ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+              : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-l-2 border-purple-500"
           }`}
         >
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
