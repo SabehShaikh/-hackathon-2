@@ -51,8 +51,10 @@ export function TaskItem({ task }: TaskItemProps) {
 
   return (
     <>
-      <Card className={`group transition-all hover:shadow-lg hover:shadow-purple-500/10 dark:hover:shadow-purple-900/20 ${
-        completed ? "opacity-75" : ""
+      <Card className={`group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/10 dark:hover:shadow-purple-900/20 hover:-translate-y-0.5 border-l-4 ${
+        completed
+          ? "opacity-75 border-l-green-500 dark:border-l-green-600"
+          : "border-l-purple-500 dark:border-l-purple-600"
       }`}>
         <CardContent className="flex items-start gap-4 p-6">
           <Checkbox
@@ -97,7 +99,8 @@ export function TaskItem({ task }: TaskItemProps) {
             </div>
           </div>
 
-          <div className="flex gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+          {/* Mobile: always visible, Desktop: show on hover */}
+          <div className="flex gap-1.5 opacity-100 md:opacity-0 transition-opacity md:group-hover:opacity-100">
             <Button
               variant="ghost"
               size="icon"
