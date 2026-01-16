@@ -1,0 +1,229 @@
+openapi: 3.0.3
+info:
+  title: Todo AI Chatbot - Chat API
+  description: |
+    Natural language chat interface for task management.
+    Integrates Grok AI agent with MCP tools for conversational CRUD operations.
+  version: 1.0.0
+  contact:
+    name: Phase 3 Development Team
+
+servers:
+  - url: https://your-app.hf.space/api
+    description: HuggingFace Spaces (production)
+  - url: http://localhost:8000/api
+    description: Local development
+
+security:
+  - BearerAuth: []
+
+paths:
+  /chat:
+    post:
+      summary: Send chat message to AI agent
+      description: |
+        Send natural language message to AI agent for task management.
+        Agent interprets intent, calls appropriate MCP tools, and returns friendly response.
+        Conversation history persists in database for multi-session continuity.
+      operationId: sendChatMessage
+      tags:
+        - Chat
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              newConversation:
+                summary: Start new conversation
+                value:
+                  message: "Add buy groceries"
+              existingConversation:
+                summary: Continue existing conversation
+                value:
+                  conversation_id: 123
+                  message: "Show my tasks"
+      responses:
+        '200':
+          description: Successful AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                addTask:
+                  summary: Task added successfully
+                  value:
+                    conversation_id: 123
+                    response: "✅ Added task: Buy groceries"
+                    tool_calls:
+                      - tool: "add_task"
+                        parameters:
+                          user_id: "user123"
+                          title: "Buy groceries"
+                        result:
+                          status: "success"
+                          data:
+                            task_id: 45
+                            title: "Buy groceries"
+                listTasks:
+                  summary: Tasks listed
+                  value:
+                    conversation_id: 123
+                    response: "You have 3 tasks:\n1. Buy groceries\n2. Call mom\n3. Pay bills"
+                    tool_calls:
+                      - tool: "list_tasks"
+                        parameters:
+                          user_id: "user123"
+                          status: "all"
+                        result:
+                          status: "success"
+                          data:
+                            - id: 45
+                              title: "Buy groceries"
+                              completed: false
+                            - id: 46
+                              title: "Call mom"
+                              completed: false
+                            - id: 47
+                              title: "Pay bills"
+                              completed: false
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                detail: "Conversation not found or does not belong to user"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT token from Phase 2 authentication.
+        Token contains user_id in 'sub' claim.
+
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        conversation_id:
+          type: integer
+          description: |
+            Existing conversation ID for multi-turn chat.
+            Omit to start new conversation.
+          example: 123
+        message:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: User's natural language input
+          example: "Add buy groceries"
+
+    ChatResponse:
+      type: object
+      required:
+        - conversation_id
+        - response
+        - tool_calls
+      properties:
+        conversation_id:
+          type: integer
+          description: Conversation ID (new or existing)
+          example: 123
+        response:
+          type: string
+          description: AI agent's friendly response
+          example: "✅ Added task: Buy groceries"
+        tool_calls:
+          type: array
+          description: |
+            List of MCP tools invoked by agent.
+            For debugging and transparency.
+          items:
+            $ref: '#/components/schemas/ToolCall'
+
+    ToolCall:
+      type: object
+      required:
+        - tool
+        - parameters
+        - result
+      properties:
+        tool:
+          type: string
+          description: MCP tool name
+          enum:
+            - add_task
+            - list_tasks
+            - complete_task
+            - delete_task
+            - update_task
+          example: "add_task"
+        parameters:
+          type: object
+          description: Parameters passed to tool
+          example:
+            user_id: "user123"
+            title: "Buy groceries"
+        result:
+          type: object
+          description: Tool return value
+          properties:
+            status:
+              type: string
+              enum: [success, error]
+            data:
+              type: object
+              description: Tool-specific result data
+            message:
+              type: string
+              description: User-friendly message
+          example:
+            status: "success"
+            data:
+              task_id: 45
+              title: "Buy groceries"
+            message: "Task created: Buy groceries"
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: "Invalid token"
+
+  responses:
+    UnauthorizedError:
+      description: Missing or invalid JWT token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: "Invalid token"
+
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: "Internal server error"

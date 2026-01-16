@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(venv/Scripts/pip install:*)",
+      "Bash(pip install:*)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 5; Invoke-WebRequest -Uri http://localhost:8000/api/health -UseBasicParsing | Select-Object -ExpandProperty Content\")",
+      "Bash(npm run build:*)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 8; Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing -TimeoutSec 10 | Select-Object -ExpandProperty StatusCode\")",
+      "Bash(powershell -Command:*)",
+      "Bash(TOKEN1=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTM4NTQ5NmUzLTdkZjEtNDM4Ni1iNzE3LTcxZWE5ZGEyMWU4OCIsImV4cCI6MTc2OTE2ODIzNn0.yqL6NIVrSp5Z_l27jRh0SASBHtnpo31jodqlgMqvfVs\")",
+      "Bash(TOKEN1=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTM4NTQ5NmUzLTdkZjEtNDM4Ni1iNzE3LTcxZWE5ZGEyMWU4OCIsImV5cCI6MTc2OTE2ODIzNn0.yqL6NIVrSp5Z_l27jRh0SASBHtnpo31jodqlgMqvfVs\":*)",
+      "Bash(TOKEN2=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTQ5YWEzNzZmLTkzYmQtNDk1YS05ZWQzLWI2MTg3YjFjMTQ1MyIsImV4cCI6MTc2OTE2ODU4NX0.XOvhTQFyGjFDTAP-gOBg_7WaCPNzAWxcGYnJ2ag3sMU\")",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(python:*)",
+      "Bash(taskkill //F //PID 18444)",
+      "Bash(taskkill //F //PID 9680)",
+      "Bash(taskkill //F //PID 20828)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c \"taskkill /F /PID 9848\")",
+      "Bash(dir /b \"D:\\\\Q4-Gemini_CLI\\\\Hackathon_2\\\\phase3\\\\frontend\\\\src\")",
+      "Bash(git branch:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}

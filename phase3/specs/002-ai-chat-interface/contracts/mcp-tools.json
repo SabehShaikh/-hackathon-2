@@ -1,0 +1,530 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCP Tools for Task Management Agent",
+  "description": "5 MCP tools following mcp-tool-pattern skill for conversational task CRUD operations",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "add_task",
+      "description": "Create a new task for the user. Call this when user wants to add, create, or remember something.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User identifier extracted from JWT token (automatically provided by chat endpoint)"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Task title (required). Extract from natural language input (e.g., 'buy groceries')."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Optional task description with additional details"
+          }
+        },
+        "required": ["user_id", "title"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"],
+            "description": "Operation status"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "integer",
+                "description": "Newly created task ID"
+              },
+              "title": {
+                "type": "string",
+                "description": "Task title (confirmation)"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "User-friendly confirmation message",
+            "example": "Task created: Buy groceries"
+          }
+        }
+      },
+      "errors": [
+        {
+          "condition": "Empty title",
+          "message": "Task title cannot be empty"
+        },
+        {
+          "condition": "Database error",
+          "message": "Failed to create task: {error details}"
+        }
+      ],
+      "examples": [
+        {
+          "input": {
+            "user_id": "user123",
+            "title": "Buy groceries",
+            "description": ""
+          },
+          "output": {
+            "status": "success",
+            "data": {
+              "task_id": 45,
+              "title": "Buy groceries"
+            },
+            "message": "Task created: Buy groceries"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user123",
+            "title": "Review pull request",
+            "description": "Check for security issues and test coverage"
+          },
+          "output": {
+            "status": "success",
+            "data": {
+              "task_id": 46,
+              "title": "Review pull request"
+            },
+            "message": "Task created: Review pull request"
+          }
+        }
+      ]
+    },
+    {
+      "name": "list_tasks",
+      "description": "Retrieve user's tasks with optional filtering. Call this when user wants to see, list, or check their tasks.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User identifier extracted from JWT token"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["all", "pending", "completed"],
+            "default": "all",
+            "description": "Filter tasks by completion status. 'pending' = incomplete tasks only, 'completed' = done tasks only."
+          }
+        },
+        "required": ["user_id"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Task ID"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Task title"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Task description (may be empty)"
+                },
+                "completed": {
+                  "type": "boolean",
+                  "description": "Completion status"
+                }
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "User-friendly summary",
+            "example": "You have 3 tasks"
+          }
+        }
+      },
+      "errors": [
+        {
+          "condition": "Database error",
+          "message": "Failed to retrieve tasks: {error details}"
+        }
+      ],
+      "examples": [
+        {
+          "input": {
+            "user_id": "user123",
+            "status": "all"
+          },
+          "output": {
+            "status": "success",
+            "data": [
+              {
+                "id": 45,
+                "title": "Buy groceries",
+                "description": "",
+                "completed": false
+              },
+              {
+                "id": 46,
+                "title": "Call mom",
+                "description": "",
+                "completed": false
+              },
+              {
+                "id": 47,
+                "title": "Pay bills",
+                "description": "",
+                "completed": true
+              }
+            ],
+            "message": "You have 3 tasks"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user123",
+            "status": "pending"
+          },
+          "output": {
+            "status": "success",
+            "data": [
+              {
+                "id": 45,
+                "title": "Buy groceries",
+                "description": "",
+                "completed": false
+              },
+              {
+                "id": 46,
+                "title": "Call mom",
+                "description": "",
+                "completed": false
+              }
+            ],
+            "message": "You have 2 pending tasks"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user999",
+            "status": "all"
+          },
+          "output": {
+            "status": "success",
+            "data": [],
+            "message": "You don't have any tasks yet"
+          }
+        }
+      ]
+    },
+    {
+      "name": "complete_task",
+      "description": "Mark a task as completed. Call this when user says they finished, completed, or are done with a task.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User identifier for authorization"
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "Task ID to mark as completed"
+          }
+        },
+        "required": ["user_id", "task_id"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Completed task: Buy groceries"
+          }
+        }
+      },
+      "errors": [
+        {
+          "condition": "Task not found",
+          "message": "Task {task_id} not found"
+        },
+        {
+          "condition": "Task belongs to different user",
+          "message": "Task {task_id} not found"
+        },
+        {
+          "condition": "Database error",
+          "message": "Failed to complete task: {error details}"
+        }
+      ],
+      "examples": [
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 45
+          },
+          "output": {
+            "status": "success",
+            "data": {
+              "task_id": 45,
+              "title": "Buy groceries"
+            },
+            "message": "Completed task: Buy groceries"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 999
+          },
+          "output": {
+            "status": "error",
+            "data": {},
+            "message": "Task 999 not found"
+          }
+        }
+      ]
+    },
+    {
+      "name": "delete_task",
+      "description": "Delete a task permanently. Call this when user wants to remove, delete, or cancel a task.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User identifier for authorization"
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "Task ID to delete"
+          }
+        },
+        "required": ["user_id", "task_id"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Deleted task: Team meeting"
+          }
+        }
+      },
+      "errors": [
+        {
+          "condition": "Task not found",
+          "message": "Task {task_id} not found"
+        },
+        {
+          "condition": "Task belongs to different user",
+          "message": "Task {task_id} not found"
+        },
+        {
+          "condition": "Database error",
+          "message": "Failed to delete task: {error details}"
+        }
+      ],
+      "examples": [
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 45
+          },
+          "output": {
+            "status": "success",
+            "data": {
+              "task_id": 45,
+              "title": "Buy groceries"
+            },
+            "message": "Deleted task: Buy groceries"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 999
+          },
+          "output": {
+            "status": "error",
+            "data": {},
+            "message": "Task 999 not found"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_task",
+      "description": "Update task title and/or description. Call this when user wants to change, modify, or rename a task.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User identifier for authorization"
+          },
+          "task_id": {
+            "type": "integer",
+            "description": "Task ID to update"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "New task title (optional if updating description only)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "New task description (optional if updating title only)"
+          }
+        },
+        "required": ["user_id", "task_id"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Updated task 2: Call mom tonight"
+          }
+        }
+      },
+      "errors": [
+        {
+          "condition": "Task not found",
+          "message": "Task {task_id} not found"
+        },
+        {
+          "condition": "Task belongs to different user",
+          "message": "Task {task_id} not found"
+        },
+        {
+          "condition": "No fields provided",
+          "message": "At least one field (title or description) must be provided"
+        },
+        {
+          "condition": "Database error",
+          "message": "Failed to update task: {error details}"
+        }
+      ],
+      "examples": [
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 46,
+            "title": "Call mom tonight"
+          },
+          "output": {
+            "status": "success",
+            "data": {
+              "task_id": 46,
+              "title": "Call mom tonight",
+              "description": ""
+            },
+            "message": "Updated task 46: Call mom tonight"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 45,
+            "description": "Milk, eggs, bread, and vegetables"
+          },
+          "output": {
+            "status": "success",
+            "data": {
+              "task_id": 45,
+              "title": "Buy groceries",
+              "description": "Milk, eggs, bread, and vegetables"
+            },
+            "message": "Updated task 45 description"
+          }
+        },
+        {
+          "input": {
+            "user_id": "user123",
+            "task_id": 999
+          },
+          "output": {
+            "status": "error",
+            "data": {},
+            "message": "Task 999 not found"
+          }
+        }
+      ]
+    }
+  ],
+  "agent_integration": {
+    "system_instructions": "You are a helpful task management assistant. Users will tell you about tasks they want to add, complete, delete, or update. You have access to tools to manage their tasks. Always confirm actions with friendly messages. If a task is not found, suggest listing tasks to see available IDs. Be conversational and helpful.",
+    "response_format": "Always respond with friendly, conversational language. Use emojis sparingly (✅ for success). Confirm what action was taken and include relevant details (task ID, title). For errors, explain what went wrong and suggest next steps.",
+    "intent_mapping": {
+      "add_keywords": ["add", "create", "new", "remind", "remember", "need to"],
+      "list_keywords": ["show", "list", "what", "see", "display", "get"],
+      "complete_keywords": ["done", "complete", "finish", "finished", "completed", "mark as done"],
+      "delete_keywords": ["delete", "remove", "cancel", "get rid of"],
+      "update_keywords": ["change", "update", "modify", "rename", "edit"]
+    }
+  }
+}
