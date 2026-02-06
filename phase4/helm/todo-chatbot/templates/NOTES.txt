@@ -1,0 +1,57 @@
+
+Todo AI Chatbot has been deployed!
+
+=============================================================
+DEPLOYMENT INFORMATION
+=============================================================
+
+Release Name: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Chart Version: {{ .Chart.Version }}
+App Version: {{ .Chart.AppVersion }}
+
+=============================================================
+ACCESSING THE APPLICATION
+=============================================================
+
+1. Frontend (Web UI):
+{{- if eq .Values.frontend.service.type "NodePort" }}
+   Run: minikube service {{ include "todo-chatbot.fullname" . }}-frontend --url
+   Or access: http://localhost:{{ .Values.frontend.service.nodePort }}
+{{- else }}
+   kubectl port-forward svc/{{ include "todo-chatbot.fullname" . }}-frontend {{ .Values.frontend.service.port }}:{{ .Values.frontend.service.port }}
+{{- end }}
+
+2. Backend (API):
+{{- if eq .Values.backend.service.type "NodePort" }}
+   Run: minikube service {{ include "todo-chatbot.fullname" . }}-backend --url
+   Or access: http://localhost:{{ .Values.backend.service.nodePort }}
+   Health check: http://localhost:{{ .Values.backend.service.nodePort }}/api/health
+   API docs: http://localhost:{{ .Values.backend.service.nodePort }}/docs
+{{- else }}
+   kubectl port-forward svc/{{ include "todo-chatbot.fullname" . }}-backend {{ .Values.backend.service.port }}:{{ .Values.backend.service.port }}
+{{- end }}
+
+=============================================================
+USEFUL COMMANDS
+=============================================================
+
+3. Check pod status:
+   kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }}
+
+4. View backend logs:
+   kubectl logs -l app.kubernetes.io/component=backend,app.kubernetes.io/instance={{ .Release.Name }}
+
+5. View frontend logs:
+   kubectl logs -l app.kubernetes.io/component=frontend,app.kubernetes.io/instance={{ .Release.Name }}
+
+6. Scale deployments:
+   kubectl scale deployment {{ include "todo-chatbot.fullname" . }}-backend --replicas=3
+   kubectl scale deployment {{ include "todo-chatbot.fullname" . }}-frontend --replicas=3
+
+7. To uninstall:
+   helm uninstall {{ .Release.Name }}
+
+=============================================================
+For more information, see README.md
+=============================================================

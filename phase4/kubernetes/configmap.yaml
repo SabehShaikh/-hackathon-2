@@ -1,0 +1,14 @@
+# Kubernetes ConfigMap for Todo Chatbot
+# Contains non-sensitive configuration
+# AI Tool: kubectl-ai - kubectl ai "create configmap for todo app with allowed origins"
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-config
+  labels:
+    app.kubernetes.io/name: todo-chatbot
+    app.kubernetes.io/component: config
+    app.kubernetes.io/managed-by: kubectl
+data:
+  ALLOWED_ORIGINS: "http://localhost:30080"
+  NEXT_PUBLIC_API_URL: "http://localhost:30800"
