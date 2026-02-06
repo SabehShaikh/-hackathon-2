@@ -1,0 +1,18 @@
+apiVersion: v2
+name: todo-chatbot
+description: Todo AI Chatbot - Phase 4 Kubernetes Deployment with FastAPI backend and Next.js frontend
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - todo
+  - chatbot
+  - ai
+  - kubernetes
+  - fastapi
+  - nextjs
+  - helm
+maintainers:
+  - name: Phase 4 Team
+home: https://github.com/hackathon/todo-chatbot
+icon: https://example.com/todo-icon.png

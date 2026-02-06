@@ -1,0 +1,62 @@
+# Default values for todo-chatbot Helm chart
+# Override these values during installation with --set or -f values.yaml
+
+# Backend configuration
+backend:
+  replicas: 2
+  image:
+    repository: todo-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 8000
+    nodePort: 30800
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+  probe:
+    path: /api/health
+    initialDelaySeconds: 30
+    periodSeconds: 60
+    timeoutSeconds: 15
+
+# Frontend configuration
+frontend:
+  replicas: 2
+  image:
+    repository: todo-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 3000
+    nodePort: 30080
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  probe:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 10
+
+# Configuration (non-sensitive)
+config:
+  allowedOrigins: "http://localhost:30080"
+  apiUrl: "http://localhost:30800"
+
+# Secrets (set during install - do not commit real values)
+# Use: helm install ... --set secrets.databaseUrl="..." --set secrets.groqApiKey="..."
+secrets:
+  databaseUrl: ""
+  groqApiKey: ""
+  betterAuthSecret: ""
